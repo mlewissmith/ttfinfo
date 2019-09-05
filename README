@@ -1,0 +1,22 @@
+NAME
+    ttfinfo - report information about fonts (.ttf, .ttc, .otf ...)
+
+SYNOPSIS
+    ttfinfo [-iap --csv] *FILE...*
+
+OPTIONS
+    -i, --info
+        Print all information about font.
+
+    -n, --name
+        Print each font's name.
+
+    -a, --family
+        Print each font's family name.
+
+    -p, --postscript-name
+        Print each font's PostScript name.
+
+    --csv
+        Print all information about font, CSV format
+
