@@ -65,6 +65,14 @@ Print each font's PostScript name.
 
 Print all information about font, CSV format
 
+=item B<-A>, B<--firstfamily>
+
+UNDOCUMENTED FEATURE.  use the source, luke.
+
+=item B<-N>, B<--firstname>
+
+UNDOCUMENTED FEATURE.  use the source, luke.
+
 =back
 
 =cut
@@ -77,6 +85,8 @@ GetOptions(\%opt,
            'info|i'         => sub { $query = "info"; },
            'csv'            => sub { $query = "csv"; },
            'html'           => sub { $query = "html"; },
+           'firstfamily|A'  => sub { $query = "firstfamily"; },
+           'firstname|N'    => sub { $query = "firstname"; },
            'help|h'         => sub { pod2usage(-verbose => 1); },
            'man'            => sub { pod2usage(-verbose => 2); },
     ) or pod2usage(-verbose => 1);
@@ -115,6 +125,7 @@ given($query) {
             print "\n";
         }
     }
+
     when("name") {
         for my $filename (sort keys %data) {
             my %name = ();
@@ -126,6 +137,7 @@ given($query) {
             print("$filename:".join(",",sort keys %name)."\n");
         }
     }
+
     when("family") {
         for my $filename (sort keys %data) {
             my %family = ();
@@ -137,6 +149,33 @@ given($query) {
             print("$filename:".join(",",sort keys %family)."\n");
         }
     }
+
+    when("firstname") {
+        for my $filename (sort keys %data) {
+            my %name = ();
+            for my $key (sort keys %keys) {
+                if ($key =~ /^FontName/ and $data{$filename}{$key}) {
+                    $name{$data{$filename}{$key}}++;
+                }
+            }
+            my @names = sort keys %name;
+            print("$names[0]\n");
+        }
+    }
+
+    when("firstfamily") {
+        for my $filename (sort keys %data) {
+            my %family = ();
+            for my $key (sort keys %keys) {
+                if ($key =~ /^FontFamily/ and $data{$filename}{$key}) {
+                    $family{$data{$filename}{$key}}++;
+                }
+            }
+            my @families = sort keys %family;
+            print("$families[0]\n");
+        }
+    }
+
     when("postscript") {
         for my $filename (sort keys %data) {
             my %psname = ();
@@ -148,6 +187,7 @@ given($query) {
             print("$filename:".join(",",sort keys %psname)."\n");
         }
     }
+
     when("csv") {
         my $csv = Text::CSV_XS->new({binary => 1, eol => $/ });
         my @cols = sort keys %keys;
@@ -164,6 +204,7 @@ given($query) {
             print $csv->string();
         }
     }
+
     when("html") {
         print heredoc(<<"##__HTML__##");
 # <html>
