@@ -12,7 +12,7 @@ B<ttfinfo> [B<-iap> B<--csv>] I<FILE...>
 
 use strict;
 use warnings;
-use feature qw(switch say);
+use feature qw(say);
 
 use Data::Dumper;
 use Getopt::Long;
@@ -108,8 +108,8 @@ for my $filename (@ARGV) {
     }
 }
 
-given($query) {
-    when("info") {
+for($query) {
+    /^info$/ && do {
         for my $filename (sort keys %data) {
             my $longestkeylength = (reverse sort { $a <=> $b } map { length($_) } keys %{$data{$filename}} )[0];
             print "======== $filename\n";
@@ -124,9 +124,9 @@ given($query) {
             }
             print "\n";
         }
-    }
+    };
 
-    when("name") {
+    /^name$/ && do {
         for my $filename (sort keys %data) {
             my %name = ();
             for my $key (sort keys %keys) {
@@ -136,9 +136,9 @@ given($query) {
             }
             print("$filename:".join(",",sort keys %name)."\n");
         }
-    }
+    };
 
-    when("family") {
+    /^family$/ && do {
         for my $filename (sort keys %data) {
             my %family = ();
             for my $key (sort keys %keys) {
@@ -148,9 +148,9 @@ given($query) {
             }
             print("$filename:".join(",",sort keys %family)."\n");
         }
-    }
+    };
 
-    when("firstname") {
+    /^firstname$/ && do {
         for my $filename (sort keys %data) {
             my %name = ();
             for my $key (sort keys %keys) {
@@ -161,9 +161,9 @@ given($query) {
             my @names = sort keys %name;
             print("$names[0]\n");
         }
-    }
+    };
 
-    when("firstfamily") {
+    /^firstfamily$/ && do {
         for my $filename (sort keys %data) {
             my %family = ();
             for my $key (sort keys %keys) {
@@ -174,9 +174,9 @@ given($query) {
             my @families = sort keys %family;
             print("$families[0]\n");
         }
-    }
+    };
 
-    when("postscript") {
+    /^postscript$/ && do {
         for my $filename (sort keys %data) {
             my %psname = ();
             for my $key (sort keys %keys) {
@@ -186,9 +186,9 @@ given($query) {
             }
             print("$filename:".join(",",sort keys %psname)."\n");
         }
-    }
+    };
 
-    when("csv") {
+    /^csv$/ && do {
         my $csv = Text::CSV_XS->new({binary => 1, eol => $/ });
         my @cols = sort keys %keys;
         # header line
@@ -203,9 +203,9 @@ given($query) {
             $status = $csv->combine(@line);
             print $csv->string();
         }
-    }
+    };
 
-    when("html") {
+    /^html$/ && do {
         print heredoc(<<"##__HTML__##");
 # <html>
 # <head><title>TTF INFO</title></head>
@@ -227,11 +227,10 @@ given($query) {
                 }
             }
             print "</pre>\n";
-        }
-        print heredoc(<<"##__HTML__##");
+    }
+    print heredoc(<<"##__HTML__##");
 # </body>
 # </html>
 ##__HTML__##
-
-    }
+    };
 }
